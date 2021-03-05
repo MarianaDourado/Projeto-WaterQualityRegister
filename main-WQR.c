@@ -22,19 +22,6 @@ typedef struct{
 
 state *p_UF;
 
-/*
-[main-WQR.c 2021-03-05 01:09:28.874]
-,,main-WQR.c:23:14: error: initializer element is not constant
-   23 | state *p_UF= (state *) malloc(27 * sizeof(state));
-      |              ^
-
-[main-WQR.c 2021-03-05 01:09:45.808]
-,,main-WQR.c:23:14: error: initializer element is not constant
-   23 | state *p_UF= malloc(27 * sizeof(state));
-      |              ^~~~~~
-
-*/
-
 //char STATE[27][3]; // FAZER MALLOC
 
 state state_data;
@@ -43,6 +30,12 @@ water water_data;
 void find_file(char* UF);
 
 void while_update_info();
+
+void delete_data();
+
+void update_data();
+
+void visualize_data();
 
 
 int main(){
@@ -57,15 +50,14 @@ int main(){
     printf("(1) Registrar um estado\n(2) Visualizar um registro\n(3) Alterar um registro\n(4) Deletar um registro\n(5) Encerrar o programa\n");
     scanf("%d", &choice);
 
-    //file = fopen("GO.txt", "r+");
+    file = fopen("GO.txt", "r+"); //para teste
     
-
     switch(choice){
         case 1: // INCOMPLETO - estudar 2o argumento da funcao "fopen"
         printf("Voce escolheu registrar um estado. Insira o UF: "); // deve ser maiusculo
-        scanf("%s%*c", state_data.UF); //tem & ?
+        scanf("%s%*c", state_data.UF);
 
-        find_file(state_data.UF);
+        //find_file(state_data.UF); // ideal
         
         if(fscanf(file, "%u%*c", &state_data.n_habitantes) != 0){ //se um arquivo com a UF desse estado ja existe (1a linha != 0) 
             printf("Esse estado ja foi registrado. O que deseja fazer?\n");
@@ -74,74 +66,22 @@ int main(){
             //printf("hab:%d\n",state_data.n_habitantes);
             switch(choice2){
                 case 1: // Alteração OKAY
-                
-                rewind(file);  //volta para o começo do arquivo
-
-                
-                printf("Esses sao os dados atuais.\n");
-                
-                fscanf(file,"%u%*c", &state_data.n_habitantes);
-                printf("[1] Quantidade de habitantes: %u\n",state_data.n_habitantes);
-
-                fscanf(file, "%d%*c", &state_data.state_water.bact);
-                printf("[2] Presenca de bacterias(0/1): %d\n", state_data.state_water.bact);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.turbidez);
-                printf("[3] Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.CRL);
-                printf("[4] Cloro residual livre: %.3lfmg/dl\n", state_data.state_water.CRL);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.cor);
-                printf("[5] Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
-                
-                while_update_info();   //altera o dado escolhido
-                
-                //printf("%u\n%d\n%.3lf\n%.3lf\n%.3lf\n", state_data.n_habitantes, state_data.state_water.bact, state_data.state_water.turbidez, state_data.state_water.CRL,state_data.state_water.cor);
-                memset(P,'\0',strlen(P));
-                sprintf(P,"%u\n%d\n%lf\n%lf\n%lf", state_data.n_habitantes, state_data.state_water.bact, state_data.state_water.turbidez, state_data.state_water.CRL,state_data.state_water.cor);
-                
-                rewind(file);
-                if(fwrite(P, sizeof(char), sizeof(P), file) != sizeof(P)){ //unsigned fwrite(void *bUFfer,int numero_de_bytes,int count,FILE *fp);
-                    printf("when you try your best, but you dont succeed.");
-                }
-                else{
-                    printf("deu certo");
-                }
-
+                update_data();
                 break;
 
 
                 case 2: //Visualização OKAY
-                rewind(file);
-
-                fscanf(file, "%u%*c", &state_data.n_habitantes);
-                
-                printf("Numero de habitantes de %s: %u\n", state_data.UF, state_data.n_habitantes);
-
-                fscanf(file, "%d%*c", &state_data.state_water.bact);
-                printf("Presenca de bacterias(0/1): %d\n", state_data.state_water.bact);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.turbidez);
-                printf("Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.CRL);
-                printf("Cloro residual livre: %.3lfmg/dl\n", state_data.state_water.CRL);
-
-                fscanf(file, "%lf%*c", &state_data.state_water.cor);
-                printf("Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
-
-
+                visualize_data();
                 break;
+
 
                 case 3: // Deletar OKAY
-                sprintf(P,"0");
-                
-                rewind(file);
-                fwrite(P, sizeof(char), sizeof(P), file);
+                delete_data();
                 break;
 
-                default:
+
+                default: //INCOMPLETO
+                printf("Essa opcao nao existe! Tente novamente.\n");
                 break;
             }
 
@@ -164,50 +104,34 @@ int main(){
             printf("Ainda nao ha registros cadastrados no sistema.\n");
         }
         else{
-            rewind(file);
-
-            fscanf(file, "%u%*c", &state_data.n_habitantes);
-                
-            printf("Numero de habitantes de %s: %u\n", state_data.UF, state_data.n_habitantes);
-
-            fscanf(file, "%d%*c", &state_data.state_water.bact);
-            printf("Presenca de bacterias(0/1): %d\n", state_data.state_water.bact);
-
-            fscanf(file, "%lf%*c", &state_data.state_water.turbidez);
-            printf("Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
-
-            fscanf(file, "%lf%*c", &state_data.state_water.CRL);
-            printf("Cloro residual livre: %.3lfmg/dl\n", state_data.state_water.CRL);
-
-            fscanf(file, "%lf%*c", &state_data.state_water.cor);
-            printf("Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
+           visualize_data();
         }
 
         break;
             
 
-        /*case 3:
-        if(){ // se não há registros
-                printf("Ainda nao ha registros cadastrados no sistema.\n");
+        case 3: //altera
+        if(file == NULL){ // se não há registros (rever condicao)
+            printf("Ainda nao ha registros cadastrados no sistema.\n");
+            // perguntas basicas?
         }
+        else update_data();
         break;
 
-        case 4:
-        if(){ // se não há registros
-                printf("Ainda nao ha registros cadastrados no sistema.\n");
-        }
+        case 4: // deletar
+        delete_data();
         break;
 
-        case 5:
+        case 5: // sair
         return 0;
         break;
 
         default:
-        printf("Essa opcao nao existe! Tente novamente.\n"); // como implementar isso?
-        break; */
+        printf("Essa opcao nao existe! Tente novamente.\n");
+        break;
     }
 
-    fclose(file);
+    fclose(file); // Luiza approved this xD
     return 0;
 }
 
@@ -317,3 +241,65 @@ void while_update_info()
     }
 }
 
+void delete_data()
+{
+    sprintf(P,"0");
+                
+    rewind(file);
+    fwrite(P, sizeof(char), sizeof(P), file);
+}
+
+void update_data()
+{
+    rewind(file); //volta para o começo do arquivo
+
+    printf("Esses sao os dados atuais.\n");
+
+    fscanf(file, "%u%*c", &state_data.n_habitantes);
+    printf("[1] Quantidade de habitantes: %u\n", state_data.n_habitantes);
+
+    fscanf(file, "%d%*c", &state_data.state_water.bact);
+    printf("[2] Presenca de bacterias(0/1): %d\n", state_data.state_water.bact);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.turbidez);
+    printf("[3] Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.CRL);
+    printf("[4] Cloro residual livre: %.3lfmg/dl\n", state_data.state_water.CRL);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.cor);
+    printf("[5] Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
+
+    while_update_info(); //altera o dado escolhido
+
+    //printf("%u\n%d\n%.3lf\n%.3lf\n%.3lf\n", state_data.n_habitantes, state_data.state_water.bact, state_data.state_water.turbidez, state_data.state_water.CRL,state_data.state_water.cor);
+    memset(P, '\0', strlen(P));
+    sprintf(P, "%u\n%d\n%lf\n%lf\n%lf", state_data.n_habitantes, state_data.state_water.bact, state_data.state_water.turbidez, state_data.state_water.CRL, state_data.state_water.cor);
+
+    rewind(file);
+    if (fwrite(P, sizeof(char), sizeof(P), file) != sizeof(P)) printf("when you try your best, but you dont succeed.");
+
+    else printf("deu certo");
+ 
+}
+
+void visualize_data()
+{
+    rewind(file);
+
+    fscanf(file, "%u%*c", &state_data.n_habitantes);
+
+    printf("Numero de habitantes de %s: %u\n", state_data.UF, state_data.n_habitantes);
+
+    fscanf(file, "%d%*c", &state_data.state_water.bact);
+    printf("Presenca de bacterias(0/1): %d\n", state_data.state_water.bact);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.turbidez);
+    printf("Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.CRL);
+    printf("Cloro residual livre: %.3lfmg/dl\n", state_data.state_water.CRL);
+
+    fscanf(file, "%lf%*c", &state_data.state_water.cor);
+    printf("Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
+}
