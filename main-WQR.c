@@ -45,7 +45,7 @@ int main(){
 
 
 //-----------------------screen1--------------------------------
-    system("clear");
+    system("cls");
     printf("Ola, servidor(a)! Bem-vindo(a) ao WQRegister. Para comecar, selecione uma opcao: \n");
     printf("(1) Registrar um estado\n(2) Visualizar um registro\n(3) Alterar um registro\n(4) Deletar um registro\n(5) Encerrar o programa\n");
     scanf("%d", &choice);
