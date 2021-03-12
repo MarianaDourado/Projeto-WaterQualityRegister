@@ -5,7 +5,6 @@
 FILE *file;
 
 char filename[7];
-
 char P[50];
 
 typedef struct{
@@ -14,7 +13,6 @@ typedef struct{
     double CRL; // Cloro residual livre em mg/L (0,5 <= CRL <= 2,0) //2
     double cor; // em unidades Hazen ( cor <= 15) //4
 }water;
-//water *p_water=NULL;
 
 typedef struct{
     unsigned int n_habitantes; // %u
@@ -23,8 +21,6 @@ typedef struct{
 }state;
 
 state *p_UF;
-
-//char STATE[27][3]; // FAZER MALLOC
 
 state state_data;
 water water_data;
@@ -35,7 +31,7 @@ int verify_file_existence();
 
 void while_update_info();
 
-void reopen_File();
+void reopen_File(); //?
 
 void delete_data();
 
@@ -45,6 +41,7 @@ void read_file();
 
 void print_data_and_problems();
 
+// Antes de enviar, checar prints inadequados xD
 
 int main(){
     int choice, choice2, excluded=1;
@@ -73,7 +70,7 @@ int main(){
                 break;
 
 
-                case 2: //Visualização INCOMPLETO
+                case 2: //Visualização OKAY
                 read_file();
                 print_data_and_problems();
                 break;
