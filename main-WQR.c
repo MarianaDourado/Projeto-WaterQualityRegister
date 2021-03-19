@@ -29,7 +29,7 @@ typedef struct
     //int tm_isdst;             //indica horário de verão se for diferente de zero
 }tm;
 
-tm *calend=NULL; //ponteiro para struct que armazena data e hora   
+tm *calend; //ponteiro para struct que armazena data e hora   
   
 
 int temp=0, finish=1; //variaveis aux
@@ -217,7 +217,7 @@ int main(){
         
 
         fclose(file); // Luiza approved this xD kkkkk
-        printf("O programa esta para ser finalizado. Deseja consultar, alterar ou deletar outro dado?\n(1) Sim\t(2)Nao\n");
+        printf("O programa esta para ser finalizado. Deseja consultar, alterar ou deletar outro dado?\n(1) Sim\t(2) Nao\n");
         scanf("%d", &finish);
     }
     thanks_return();
@@ -414,8 +414,19 @@ void print_data_and_problems()
     printf("Turbidez: %.3lfuT\n", state_data.state_water.turbidez);
     printf("Cloro residual livre: %.3lfmg/L\n", state_data.state_water.CRL);
     printf("Cor em unidades Hazen: %.3lfuH\n", state_data.state_water.cor);
-
-    //printf("\nOs problemas "); // FALTA!!!
+/*
+    int bact; // bacteriologico (0)/1 //1
+    double turbidez; // em unidades de turbidez (turbidez <= 5) //3
+    double CRL; // Cloro residual livre em mg/L (0,5 <= CRL <= 2,0) //2
+    double cor; // em unidades Hazen ( cor <= 15) //4
+*/
+    printf("\nSituacao da agua: ");
+    if(state_data.state_water.bact == 1 || state_data.state_water.turbidez > 5 || (state_data.state_water.CRL < 0.5 || state_data.state_water.CRL > 2.0) || state_data.state_water.cor > 15)
+    {
+        printf("Nao ppotavel\nGostaria de checar os problemas?\n(1) Sim\n(2) Nao\n"); // soluções tambem?
+    }
+    else printf("Potavel\n");
+    
 }
 
 void read_file()
@@ -439,6 +450,7 @@ int verify_file_existence(){
     //tem registro
     return 1;
 }
+
 
 void thanks_return(){
     printf("\nO programa esta sendo finalizado.\n");
