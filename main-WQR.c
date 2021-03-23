@@ -167,7 +167,7 @@ int main(){
                 
             }
             else{ // se há registros
-                printf("Imprimindo dados...\n"); //time.h here <--
+                printf("Imprimindo dados...\n\n"); //time.h here <--
                 read_file(); //sscanf
                 print_data_and_problems();
             }
@@ -217,12 +217,14 @@ int main(){
         
 
         fclose(file); // Luiza approved this xD kkkkk
-        printf("O programa esta para ser finalizado. Deseja consultar, alterar ou deletar outro dado?\n(1) Sim\t(2) Nao\n");
+        printf("\nO programa esta prestes a ser finalizado. Deseja registrar, consultar, alterar ou deletar outro dado?\n(1) Sim\t(2) Nao\n"); //gostei desse '/t'. Vamos mudar?
         scanf("%d", &finish);
     }
     thanks_return();
     return 0; 
 }
+
+
 
 
 
@@ -280,8 +282,8 @@ void register_or_not()
             fclose(file);
             break;
 
-        case 2: //Nao, nao quero registrar  
-            thanks_return();
+        case 2: //Nao, nao quero registrar e finalizar
+            //thanks_return();
             fclose(file);
             break;
 
@@ -420,13 +422,73 @@ void print_data_and_problems()
     double CRL; // Cloro residual livre em mg/L (0,5 <= CRL <= 2,0) //2
     double cor; // em unidades Hazen ( cor <= 15) //4
 */
+    int ans=0;
     printf("\nSituacao da agua: ");
     if(state_data.state_water.bact == 1 || state_data.state_water.turbidez > 5 || (state_data.state_water.CRL < 0.5 || state_data.state_water.CRL > 2.0) || state_data.state_water.cor > 15)
     {
-        printf("Nao ppotavel\nGostaria de checar os problemas?\n(1) Sim\n(2) Nao\n"); // soluções tambem?
+        printf("Nao potavel\nGostaria de checar os problemas?\n\n(1) Sim\n(2) Nao\n"); // soluções tambem?
+        
+        while(ans != 1 && ans != 2){
+            if(ans == -1) printf("Essa opcao nao existe. Tente novamente.\n");
+            scanf("%d", &ans);
+
+            switch(ans){
+            case 1: //sim, imprimir problemas
+                if(state_data.state_water.bact==1) printf("Bacterias presentes na agua.\n");
+                if(state_data.state_water.turbidez > 5) printf("A turbidez se encontra acima do valor adequado.\n");
+
+                if(state_data.state_water.CRL < 0.5) printf("A quantidade de Cloro Residual Livre esta abaixo do adequado.\n");
+                else if(state_data.state_water.CRL > 2.0) printf("A quantidade de Cloro Residual Livre esta acima do adequado.\n");
+
+                if(state_data.state_water.cor > 15) printf("A agua tem coloracao acima do adequado.\n");
+
+                printf("\nUma vez que os problemas foram citados, gostaria de acessar suas respectivas solucoes?\n(1) Sim\n(2) Nao\n");
+                int ans2;
+                while(ans2 != 1 && ans2 != 2){
+                    if(ans2 == -1) printf("Essa opcao nao existe. Tente novamente.\n");
+                    scanf("%d", &ans2);
+
+                    switch(ans2){
+                    case 1: //sim, acessar solucoes
+                        if(state_data.state_water.bact==1) printf("\n");
+                        if(state_data.state_water.turbidez > 5) printf("\n");
+
+                        if(state_data.state_water.CRL < 0.5) printf("\n");
+                        else if(state_data.state_water.CRL > 2.0) printf("\n");
+
+                        if(state_data.state_water.cor > 15) printf("\n");
+
+                        
+
+                        break;
+
+                    case 2:
+                        // Nao acessar solucoes
+                        break;
+        
+                    default:
+                        ans2 = -1;
+                        break;
+                    }
+                }
+                
+
+                break;
+
+            case 2:
+                // Nao acessar problemas
+                break;
+        
+            default:
+                ans = -1;
+                break;
+            }
+        }
     }
-    else printf("Potavel\n");
-    
+    else printf("Potavel\nNao ha problemas para visualizar.\n");
+
+    printf("\nPressione qualquer tecla para continuar.\n");
+    getch();
 }
 
 void read_file()
