@@ -3,12 +3,13 @@
 #include <string.h>
 #include <locale.h>
 #include <time.h>
+//#include "WQR.h"
 
 /*
 IDEIAS:
-    1- ÓTIMA {DIA_DA_SEMANA} PARA VOCÊ
-    2- QUAL FOI A ULTIMA ALTERAÇÃO DO ARQUIVO EM QUESTAO
-    3- TRÊS PONTINHOS PARA IMPRIMINDO DADOS...
+    1- cls + horarioatual
+    2- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
+    3- Nome do usuário
 */
 
 /* LINKS
@@ -18,7 +19,7 @@ IDEIAS:
 
 typedef struct
 {
-    int tm_sec;               //representa os segundos de 0 a 59
+    int tm_sec;               //representa os seconds de 0 a 59
     int tm_min;               //representa os minutos de 0 a 59
     int tm_hour;              //representa as horas de 0 a 24
     int tm_mday;              //dia do mês de 1 a 31
@@ -61,160 +62,183 @@ int find_file();
 
 int verify_file_existence();
 
-void while_update_info();
+void read_file();
+
+void write_in_file();
+
+void register_data();
+
+void register_or_not();
 
 void delete_data();
 
 void update_data();
 
-void read_file();
+void while_update_info();
 
 void print_data_and_problems();
+
+void thanks_return();
+
+
 
 // Antes de enviar, checar prints inadequados xD
 
 int main(){
     setlocale(LC_ALL,"Portuguese");
 
-    int choice, choice2=6, excluded=1;
+    int i, choice=0, choice2=0, excluded=1;
 
+    //variável do tipo time_t para armazenar o tempo em seconds
+    time_t seconds;
+    time_t start_t, end_t;
+
+    //obtendo o tempo em seconds
+    time(&seconds);
+
+    //para converter de seconds para o tempo local
+    //utilizamos a função localtime
+    calend = localtime(&seconds);
+
+    char *Weekdays[] = {"o domingo", "a segunda-feira", "a terca-feira", "a quarta-feira", "a quinta-feira", "a sexta-feira", "o sabado"};
+
+
+    //printf("Otim%s para voce\n\n", Weekdays);
+    
     p_UF = malloc(27 * sizeof(state));
     
-    system("cls");
-    
+    system("cls"); 
+    // aqui?
 
-    //variável do tipo time_t para armazenar o tempo em segundos
-    time_t segundos;
-    //time_t horas;
-
-    //obtendo o tempo em segundos
-    time(&segundos);
-
-    //para converter de segundos para o tempo local
-    //utilizamos a função localtime
-    calend = localtime(&segundos);
-
-    
-    printf("\nDia da semana: %d\n\n", calend->tm_wday);
-
-
-    printf("Ola, servidor(a)! Bem-vindo(a) ao WQRegister. ");
+    printf("\t\t\t\t\t\t\t\tOla, servidor(a)! Bem-vindo(a) ao WQRegister. Otim%s para voce!\n", Weekdays[calend->tm_wday]);
     while(finish!=2)
     {
         printf("Selecione uma opcao:\n");
         printf("(1) Registrar um estado\n(2) Visualizar um registro\n(3) Alterar um registro\n(4) Deletar um registro\n(5) Encerrar o programa\n");
-        scanf("%d", &choice);
 
-        switch(choice){
-            case 1: // Registrar COMPLETO
-            printf("Voce escolheu registrar um estado. Insira o UF: ");
-            scanf("%s%*c", state_data.UF);
-
-            while(find_file() == -1)
+        while (choice < 1 || choice > 5){
+           
+            if(choice == -1) printf("Essa opcao nao existe! Tente novamente.\n");
+            
+            scanf("%d%*c", &choice);
+            switch (choice)
             {
-                printf("Essa sigla de estado nao existe. Insira o UF novamente: ");
+            case 1: // Registrar COMPLETO
+                printf("Voce escolheu registrar um estado. Insira o UF: ");
                 scanf("%s%*c", state_data.UF);
-                find_file();
-            }
 
-            if(verify_file_existence() == 1){ //se um arquivo com a UF desse estado ja existe (1a linha != 0)
-                printf("Esse estado ja foi registrado. O que deseja fazer?\n");
-                printf("(1) Alterar os dados\n(2) Visualizar dados\n(3) Deletar os dados\n");
-                
-                while(choice2!=1 && choice2!=2 && choice2!=3)
+                while (find_file() == -1)
                 {
-                    if(choice2==-1) printf("Essa opcao nao existe. Tente novamente.\n");
-                    scanf("%d%*c", &choice2);
-                    switch(choice2){
-                        case 1: // Alteração OKAY
-                        update_data();
-                        break;
+                    printf("Essa sigla de estado nao existe. Insira o UF novamente: ");
+                    scanf("%s%*c", state_data.UF);
+                    find_file();
+                }
 
+                if (verify_file_existence() == 1)
+                { //se um arquivo com a UF desse estado ja existe (1a linha != 0)
+                    printf("Esse estado ja foi registrado. O que deseja fazer?\n");
+                    printf("(1) Alterar os dados\n(2) Visualizar dados\n(3) Deletar os dados\n");
+
+                    while (choice2 != 1 && choice2 != 2 && choice2 != 3)
+                    {
+                        if(choice2 == -1)
+                            printf("Essa opcao nao existe. Tente novamente.\n");
+                        scanf("%d%*c", &choice2);
+                        switch (choice2)
+                        {
+                        case 1: // Alteração OKAY
+                            update_data();
+                            break;
 
                         case 2: //Visualização OKAY
-                        read_file();
-                        print_data_and_problems();
-                        break;
-
+                            read_file();
+                            print_data_and_problems();
+                            break;
 
                         case 3: // Deletar OKAY
-                        delete_data();
-                        break;
-
+                            delete_data();
+                            break;
 
                         default: // OKAY
-                        choice2=-1;
-                        //printf("Essa opcao nao existe! Tente novamente.\n");
-                        break;
+                            choice2 = -1;
+                            //printf("Essa opcao nao existe! Tente novamente.\n");
+                            break;
+                        }
                     }
                 }
-            }
-            
-            
-            else{ //Registrando um novo estado (1a linha do arquivo = 0 ) COMPLETO
-                register_data();
-            }
-            break;   
 
-            
+                else  register_data(); //Registrando um novo estado (1a linha do arquivo = 0 ) COMPLETO
+                break;
+
             case 2: // Visualização OKAY
-            printf("Voce escolheu visualizar um registro. Insira o UF: ");
-            scanf("%s", state_data.UF);
+                printf("Voce escolheu visualizar um registro. Insira o UF: ");
+                scanf("%s", state_data.UF);
 
-            find_file();
-            if(verify_file_existence() == -1){ // se não há registros
-                register_or_not(); 
+                find_file();
+                if (verify_file_existence() == -1) register_or_not(); // se não há registros
+                else{ // se há registros
                 
-            }
-            else{ // se há registros
-                printf("Imprimindo dados...\n\n"); //time.h here <--
-                read_file(); //sscanf
-                print_data_and_problems();
-            }
+                    printf("Imprimindo dados");
+                    time(&start_t);
 
-            break;
-                
+                    for(i=0;i<3;i++)
+                    {
+                        sleep(1);
+                        printf(".");
+                    }
+                    time(&end_t);
+                    printf("\n\n");
+
+                    read_file(); //sscanf
+                    print_data_and_problems();
+                }
+
+                break;
 
             case 3: //Alteração OKAY
-            printf("Voce escolheu alterar dados. Insira o UF: ");
-            scanf("%s", state_data.UF);
+                printf("Voce escolheu alterar dados. Insira o UF: ");
+                scanf("%s", state_data.UF);
 
-            find_file();
-            if(verify_file_existence() == -1) register_or_not();
-            else update_data();
-            break;
-
+                find_file();
+                if (verify_file_existence() == -1)
+                    register_or_not();
+                else
+                    update_data();
+                break;
 
             case 4: // Deletar OKAY
-            while(excluded==1)
-            {
-                if(excluded == 0) break;
-                printf("Escolha um estado para deletar todos os dados: ");
-                scanf("%s%*c", state_data.UF);
-                find_file();
-                
-                if(verify_file_existence() == 1){
-                    printf("Os dados de %s estao sendo deletados.\n", state_data.UF);
-                    delete_data();
-                    excluded=0;
-                }
-                else{
-                    printf("Nao ha registro desse estado. Gostaria de escolher outro estado para deletar seus dados? Digite '0' para Nao, e '1' para Sim.\n");
-                    scanf("%d", &excluded);
-                }
-            } 
-            break;
+                while (excluded == 1)
+                {
+                    if (excluded == 0)
+                        break;
+                    printf("Escolha um estado para deletar todos os dados: ");
+                    scanf("%s%*c", state_data.UF);
+                    find_file();
 
-            case 5: // sair 
-            thanks_return();
-            return 0;
-            break;
+                    if (verify_file_existence() == 1)
+                    {
+                        printf("Os dados de %s estao sendo deletados.\n", state_data.UF);
+                        delete_data();
+                        excluded = 0;
+                    }
+                    else
+                    {
+                        printf("Nao ha registro desse estado. Gostaria de escolher outro estado para deletar seus dados? Digite '0' para Nao, e '1' para Sim.\n");
+                        scanf("%d", &excluded);
+                    }
+                }
+                break;
+
+            case 5: // sair
+                thanks_return();
+                return 0;
+                break;
 
             default:
-            printf("Essa opcao nao existe! Tente novamente.\n");
-            break;
+                choice = -1;
+                break;
+            }
         }
-        
 
         fclose(file); // Luiza approved this xD kkkkk
         printf("\nO programa esta prestes a ser finalizado. Deseja registrar, consultar, alterar ou deletar outro dado?\n(1) Sim\t(2) Nao\n"); //gostei desse '/t'. Vamos mudar?
@@ -371,7 +395,7 @@ void write_in_file()
     //printf("%s\n",P);
     rewind(file);
     if (fwrite(P, sizeof(char), sizeof(P), file) != sizeof(P)) printf("when you try your best, but you dont succeed.");
-    else printf("deu certo. escrevi no arquivo.\n");
+    //else printf("deu certo. escrevi no arquivo.\n");
 }
 
 void delete_data()
@@ -450,9 +474,11 @@ void print_data_and_problems()
 
                     switch(ans2){
                     case 1: //sim, acessar solucoes
-                        if(state_data.state_water.bact==1) printf("\n");
-                        if(state_data.state_water.turbidez > 5) printf("\n");
-
+                        if(state_data.state_water.bact==1) printf("Recomenda-se adicionar um agente desinfetante (Cloro) a agua e averiguar demais processos de tratamento.\n");
+                        if(state_data.state_water.turbidez > 5){
+                            printf("Checar eficiencia do processo de filtracao. Dentre os problemas estao:\n");
+                            printf("A velocidade pode estar acima do adequado para o sistema em questao;\nO leite filtrante pode estar saturado;\nA quantidade do agente coagulante esta inadequada.\n");
+                        }
                         if(state_data.state_water.CRL < 0.5) printf("\n");
                         else if(state_data.state_water.CRL > 2.0) printf("\n");
 
