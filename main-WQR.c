@@ -10,6 +10,7 @@ IDEIAS:
     1- cls + horarioatual
     2- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
     3- Nome do usuário
+    4- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
 */
 
 /* LINKS
@@ -108,7 +109,7 @@ int main(){
     p_UF = malloc(27 * sizeof(state));
     
     system("cls"); 
-    // aqui?
+    // Ideia 1
 
     printf("\t\t\t\t\t\t\t\tOla, servidor(a)! Bem-vindo(a) ao WQRegister. Otim%s para voce!\n", Weekdays[calend->tm_wday]);
     while(finish!=2)
