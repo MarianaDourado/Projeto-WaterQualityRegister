@@ -166,6 +166,7 @@ int main(){
                             break;
                         }
                     }
+                    choice2=0;
                 }
 
                 else  register_data(); //Registrando um novo estado (1a linha do arquivo = 0 ) COMPLETO
@@ -210,8 +211,7 @@ int main(){
             case 4: // Deletar OKAY
                 while (excluded == 1)
                 {
-                    if (excluded == 0)
-                        break;
+                    if (excluded == 2) break;
                     printf("Escolha um estado para deletar todos os dados: ");
                     scanf("%s%*c", state_data.UF);
                     find_file();
@@ -224,10 +224,11 @@ int main(){
                     }
                     else
                     {
-                        printf("Nao ha registro desse estado. Gostaria de escolher outro estado para deletar seus dados? Digite '0' para Nao, e '1' para Sim.\n");
+                        printf("Nao ha registro desse estado. Gostaria de escolher outro estado para deletar seus dados?\n(1) Sim\n(2) Nao\n");
                         scanf("%d", &excluded);
                     }
                 }
+                excluded=1; // n apagar isso, se n na volta ele buga
                 break;
 
             case 5: // sair
@@ -240,11 +241,12 @@ int main(){
                 break;
             }
         }
+        choice=0; //n apagar isso, se n na volta, ele buga 
 
-        fclose(file); // Luiza approved this xD kkkkk
         printf("\nO programa esta prestes a ser finalizado. Deseja registrar, consultar, alterar ou deletar outro dado?\n(1) Sim\t(2) Nao\n"); //gostei desse '/t'. Vamos mudar?
         scanf("%d", &finish);
     }
+    fclose(file); // Luiza approved this xD kkkkk
     thanks_return();
     return 0; 
 }
@@ -511,6 +513,7 @@ void print_data_and_problems()
                 break;
             }
         }
+        ans=0; //n apagar, se n buga
     }
     else printf("Potavel\nNao ha problemas para visualizar.\n");
 
