@@ -3,14 +3,16 @@
 #include <string.h>
 #include <locale.h>
 #include <time.h>
+#include <unistd.h> //Para a função sleep() - Linux
 //#include "WQR.h"
 
 /*
 IDEIAS:
     1- cls + horarioatual
     2- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
-    3- Nome do usuário
-    4- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
+    3- Login e senha
+    4- alteração feita pelo usuario: xxxxx
+    5- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
 */
 
 /* LINKS
@@ -99,7 +101,7 @@ int main(){
 
     //para converter de seconds para o tempo local
     //utilizamos a função localtime
-    calend = localtime(&seconds);
+    calend = localtime(&seconds); //ESSA LINHA DÁ ERRO NO LINUX
 
     char *Weekdays[] = {"o domingo", "a segunda-feira", "a terca-feira", "a quarta-feira", "a quinta-feira", "a sexta-feira", "o sabado"};
 
@@ -111,7 +113,7 @@ int main(){
     system("cls"); 
     // Ideia 1
 
-    printf("\t\t\t\t\t\t\t\tOla, servidor(a)! Bem-vindo(a) ao WQRegister. Otim%s para voce!\n", Weekdays[calend->tm_wday]);
+    printf("Ola, servidor(a)! Bem-vindo(a) ao WQRegister. Otim%s para voce!\n", Weekdays[calend->tm_wday]);
     while(finish!=2)
     {
         printf("Selecione uma opcao:\n");
@@ -338,7 +340,7 @@ void while_update_info()
             scanf("%u", &state_data.n_habitantes);
             break;
         case 2: //bact
-            printf("Informe o novo valor do exame bacteriologico (0 ou 1): ");
+            printf("Informe o novo valor do exame bacteriologico (0 ou 1): "); //se for diff desses 2 numeros? oq fazer?
             scanf("%d", &state_data.state_water.bact);
             break;
         case 3: //turbidez
@@ -409,7 +411,7 @@ void delete_data()
     fwrite(P, sizeof(char), sizeof(P), file);
 }
 
-void update_data()
+void update_data() //POSSÍVEL BUG = NAO ALTERA VALOR SENÃO RECOMPILADO
 {
     rewind(file); //volta para o começo do arquivo
 
@@ -518,7 +520,7 @@ void print_data_and_problems()
     else printf("Potavel\nNao ha problemas para visualizar.\n");
 
     printf("\nPressione qualquer tecla para continuar.\n");
-    getch();
+    getch(); //getchar() no linux //fazer scanf?
 }
 
 void read_file()
