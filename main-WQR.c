@@ -9,9 +9,8 @@
 /*
 IDEIAS:
     FUNCIONAIS:
-        1- Colocar solução dos problemas (MARi)
+        1-
         
-
     NÃO-FUNCIONAIS:
         1- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
         2- Login e senha
@@ -20,8 +19,7 @@ IDEIAS:
 */
 
 /* LINKS
-    1. http://linguagemc.com.br/exibindo-data-e-hora-com-time-h/
-    2. https://www.tutorialspoint.com/c_standard_library/c_function_localtime.htm
+    1- https://www.quora.com/How-can-I-create-a-login-system-in-C
 */
 
 typedef struct
@@ -328,7 +326,7 @@ void register_data()
     printf("Insira a quantidade de Cloro Residual Livre em mg/L: ");
     scanf("%lf%*c", &state_data.state_water.CRL);
 
-    printf("Insira o valor da cor em graus Hazen: ");
+    printf("Insira o valor da cor em unidades Hazen: ");
     scanf("%lf%*c", &state_data.state_water.cor);
 
     write_in_file();
@@ -528,18 +526,16 @@ void print_data_and_problems()
 
                     switch(ans2){
                     case 1: //sim, acessar solucoes
-                        if(state_data.state_water.bact==1) printf("Recomenda-se adicionar um agente desinfetante (Cloro) a agua e averiguar demais processos de tratamento.\n");
+                        if(state_data.state_water.bact==1) printf("Recomenda-se adicionar um agente desinfetante (Cloro) a agua, alem de averiguar os demais processos de tratamento.\n");
                         if(state_data.state_water.turbidez > 5){
                             printf("Checar eficiencia do processo de filtracao. Dentre os problemas estao:\n");
                             printf("A velocidade pode estar acima do adequado para o sistema em questao;\nO leite filtrante pode estar saturado;\nA quantidade do agente coagulante esta inadequada.\n");
-                            //CONTINUAR SOLUÇÕES -> MÃE DA MARI
+                            
                         }
-                        if(state_data.state_water.CRL < 0.5) printf("\n");
-                        else if(state_data.state_water.CRL > 2.0) printf("\n");
+                        if(state_data.state_water.CRL < 0.5) printf("Adicionar o agente desinfetante (Cloro) ate que alcance, no minimo, 0,5mg/L.\n");
+                        else if(state_data.state_water.CRL > 2.0) printf("Diminua a quantidade do agente desinfetante (Cloro) ate que alcance, no maximo, 2mg/L.\n");
 
-                        if(state_data.state_water.cor > 15) printf("\n");
-
-                        
+                        if(state_data.state_water.cor > 15) printf("Identificar o motivo da presenca da cor a fim de adequar o processo de tratamento conforme as metodologias especificas.\n");
 
                         break;
 
