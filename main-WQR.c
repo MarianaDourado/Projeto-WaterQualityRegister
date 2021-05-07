@@ -8,11 +8,15 @@
 
 /*
 IDEIAS:
-    1- cls + horarioatual
-    2- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
-    3- Login e senha
-    4- alteração feita pelo usuario: xxxxx
-    5- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
+    FUNCIONAIS:
+        1- Colocar solução dos problemas (MARi)
+        
+
+    NÃO-FUNCIONAIS:
+        1- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
+        2- Login e senha
+            2.1- alteração feita pelo usuario: xxxxx
+        3- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
 */
 
 /* LINKS
@@ -36,7 +40,7 @@ typedef struct
 tm *calend; //ponteiro para struct que armazena data e hora   
   
 
-int temp=0, finish=1; //variaveis aux
+int temp=0, finish=1,excluded=1; //variaveis aux
 
 FILE *file;
 
@@ -63,7 +67,7 @@ water water_data;
 
 int find_file();
 
-int verify_file_existence();
+int verify_data_existence();
 
 void read_file();
 
@@ -90,7 +94,7 @@ void thanks_return();
 int main(){
     setlocale(LC_ALL,"Portuguese");
 
-    int i, choice=0, choice2=0, excluded=1;
+    int i, choice=0, choice2=0;
 
     //variável do tipo time_t para armazenar o tempo em seconds
     time_t seconds;
@@ -137,7 +141,7 @@ int main(){
                     find_file();
                 }
 
-                if (verify_file_existence() == 1)
+                if (verify_data_existence() == 1)
                 { //se um arquivo com a UF desse estado ja existe (1a linha != 0)
                     printf("Esse estado ja foi registrado. O que deseja fazer?\n");
                     printf("(1) Alterar os dados\n(2) Visualizar dados\n(3) Deletar os dados\n");
@@ -179,7 +183,7 @@ int main(){
                 scanf("%s", state_data.UF);
 
                 find_file();
-                if (verify_file_existence() == -1) register_or_not(); // se não há registros
+                if (verify_data_existence() == -1) register_or_not(); // se não há registros
                 else{ // se há registros
                 
                     printf("Imprimindo dados");
@@ -204,33 +208,15 @@ int main(){
                 scanf("%s", state_data.UF);
 
                 find_file();
-                if (verify_file_existence() == -1)
+                if (verify_data_existence() == -1)
                     register_or_not();
                 else
                     update_data();
                 break;
 
-            case 4: // Deletar OKAY
-                while (excluded == 1)
-                {
-                    if (excluded == 2) break;
-                    printf("Escolha um estado para deletar todos os dados: ");
-                    scanf("%s%*c", state_data.UF);
-                    find_file();
-
-                    if (verify_file_existence() == 1)
-                    {
-                        printf("Os dados de %s estao sendo deletados.\n", state_data.UF);
-                        delete_data();
-                        excluded = 0;
-                    }
-                    else
-                    {
-                        printf("Nao ha registro desse estado. Gostaria de escolher outro estado para deletar seus dados?\n(1) Sim\n(2) Nao\n");
-                        scanf("%d", &excluded);
-                    }
-                }
-                excluded=1; // n apagar isso, se n na volta ele buga
+            case 4: // Deletar OKAY 
+                printf("Voce escolheu deletar dados. ");
+                while_delete_data();
                 break;
 
             case 5: // sair
@@ -252,6 +238,7 @@ int main(){
     thanks_return();
     return 0; 
 }
+
 
 
 
@@ -295,6 +282,7 @@ int find_file()
     return existe;
 }
 
+
 void register_or_not()
 {
     printf("Ainda nao ha registros cadastrados no sistema. Gostaria de registrar?\n(1) Sim, registrar.\n(2) Nao registrar e finalizar programa.\n");
@@ -321,52 +309,6 @@ void register_or_not()
             //printf("Essa opcao nao existe! Tente novamente.\n");
             break;
         }
-    }
-}
-
-void while_update_info()
-{
-    int num_altera;
-
-    while (1)
-    {
-        printf("Escreva o indice que voce deseja alterar: ");
-        scanf("%d", &num_altera);
-
-        switch (num_altera)
-        {
-        case 1: //habit
-            printf("Informe o novo valor do numero de habitantes: ");
-            scanf("%u", &state_data.n_habitantes);
-            break;
-        case 2: //bact
-            printf("Informe o novo valor do exame bacteriologico (0 ou 1): "); //se for diff desses 2 numeros? oq fazer?
-            scanf("%d", &state_data.state_water.bact);
-            break;
-        case 3: //turbidez
-            printf("Informe o novo valor da turbidez: ");
-            scanf("%lf", &state_data.state_water.turbidez);
-            break;
-
-        case 4: // CRL
-            printf("Informe o novo valor do CRL: ");
-            scanf("%lf", &state_data.state_water.CRL);
-            break;
-
-        case 5: // Cor
-            printf("Informe o novo valor da cor em unidades Hazen: ");
-            scanf("%lf", &state_data.state_water.cor);
-            break;
-
-        default:
-            printf("Opcao invalida. Tente novamente.\n"); // como faz mesmo?
-            break;
-        }
-        printf("Deseja alterar alguma outra informacao?\n(1) Sim\n(2) Nao\n");
-
-        scanf("%d", &num_altera); //reciclado
-        if (num_altera == 2)
-            break;
     }
 }
 
@@ -401,17 +343,78 @@ void write_in_file()
     rewind(file);
     if (fwrite(P, sizeof(char), sizeof(P), file) != sizeof(P)) printf("when you try your best, but you dont succeed.");
     //else printf("deu certo. escrevi no arquivo.\n");
+
+    // Para que as mudanças sejam atualizadas durante a execução do programa
+    fclose(file);
+    if(find_file() == 1) //int 
+    {   
+        printf("O arquivo foi reaberto com sucesso.\n");
+    }
+    else printf("Erro ao abrir arquivo.\n");
 }
 
+void while_delete_data()
+{
+    int num_altera2=1;
+
+    while(1)
+    {
+        printf("Informe a UF do estado: ");
+        
+        scanf("%s", &state_data.UF);
+        
+        if(find_file() == -1) printf("Esse estado nao existe!\n");
+        else if(verify_data_existence() == 1) delete_data();
+        else printf("Nao ha dados no arquivo do estado selecionado.\n");
+        
+        printf("Deseja deletar dado de algum outro estado?\n(1) Sim\n(2) Nao\n");
+
+        scanf("%d", &num_altera2); //reciclado
+        if (num_altera2 == 2) break;
+    }
+    
+}
 void delete_data()
 {
-    sprintf(P,"0");
-                
-    rewind(file);
-    fwrite(P, sizeof(char), sizeof(P), file);
+    while (excluded == 1)
+    {
+        if (excluded == 2) break;
+
+        printf("Tem certeza que deseja excluir todos os dados do arquivo?\n(1) Sim\n(2) Nao\n");
+        int are_yousure = 1;
+        scanf("%d", &are_yousure);
+
+        if (are_yousure == 2)
+        {
+            printf("O arquivo selecionado nao tera seus dados apagados.\n");
+            break;
+        }
+        else
+        {
+            printf("Os dados de %s estao sendo deletados.\n", state_data.UF);
+
+            //deletando os dados
+            sprintf(P, "0");
+            rewind(file);
+            fwrite(P, sizeof(char), sizeof(P), file);
+
+            //fechando e reabrindo arquivo
+            fclose(file);
+            printf("Fechou o arquivo\n");
+            if (find_file() == 1)
+            {
+                printf("O arquivo foi reaberto com sucesso.\n"); //apagar isso depois
+            }
+            else printf("Erro ao reabrir arquivo.\n");
+
+            excluded = 0;
+        }
+    }
+excluded = 1; // n apagar isso, se n na volta ele buga
+
 }
 
-void update_data() //POSSÍVEL BUG = NAO ALTERA VALOR SENÃO RECOMPILADO
+void update_data()
 {
     rewind(file); //volta para o começo do arquivo
 
@@ -436,6 +439,52 @@ void update_data() //POSSÍVEL BUG = NAO ALTERA VALOR SENÃO RECOMPILADO
     
     write_in_file();
 
+}
+
+void while_update_info()
+{
+    int num_altera;
+
+    while (1)
+    {
+        printf("Escreva o indice que voce deseja alterar: ");
+        scanf("%d", &num_altera);
+
+        switch (num_altera)
+        {
+        case 1: //habit
+            printf("Informe o novo valor do numero de habitantes: ");
+            scanf("%u", &state_data.n_habitantes);
+            break;
+        case 2:                                                                //bact
+            printf("Informe o novo valor do exame bacteriologico (0 ou 1): "); //se for diff desses 2 numeros? oq fazer?
+            scanf("%d", &state_data.state_water.bact);
+            break;
+        case 3: //turbidez
+            printf("Informe o novo valor da turbidez: ");
+            scanf("%lf", &state_data.state_water.turbidez);
+            break;
+
+        case 4: // CRL
+            printf("Informe o novo valor do CRL: ");
+            scanf("%lf", &state_data.state_water.CRL);
+            break;
+
+        case 5: // Cor
+            printf("Informe o novo valor da cor em unidades Hazen: ");
+            scanf("%lf", &state_data.state_water.cor);
+            break;
+
+        default:
+            printf("Opcao invalida. Tente novamente.\n"); // como faz mesmo?
+            break;
+        }
+        printf("Deseja alterar alguma outra informacao?\n(1) Sim\n(2) Nao\n");
+
+        scanf("%d", &num_altera); //reciclado
+        if (num_altera == 2)
+            break;
+    }
 }
 
 void print_data_and_problems()
@@ -483,6 +532,7 @@ void print_data_and_problems()
                         if(state_data.state_water.turbidez > 5){
                             printf("Checar eficiencia do processo de filtracao. Dentre os problemas estao:\n");
                             printf("A velocidade pode estar acima do adequado para o sistema em questao;\nO leite filtrante pode estar saturado;\nA quantidade do agente coagulante esta inadequada.\n");
+                            //CONTINUAR SOLUÇÕES -> MÃE DA MARI
                         }
                         if(state_data.state_water.CRL < 0.5) printf("\n");
                         else if(state_data.state_water.CRL > 2.0) printf("\n");
@@ -533,7 +583,7 @@ void read_file()
     fscanf(file, "%lf%*c", &state_data.state_water.cor);
 }
 
-int verify_file_existence(){
+int verify_data_existence(){
     rewind(file);
     
     fscanf(file, "%u%*c", &state_data.n_habitantes); 
