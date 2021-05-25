@@ -6,21 +6,6 @@
 #include <unistd.h> //Para a função sleep() - Linux
 //#include "WQR.h"
 
-/*
-IDEIAS:
-    FUNCIONAIS:
-        1-
-        
-    NÃO-FUNCIONAIS:
-        1- "Ola servidor" fica no meio do terminal (https://stackoverflow.com/questions/28443236/how-to-print-a-text-in-the-middle-of-the-screen-in-c-programming)
-        2- Login e senha
-            2.1- alteração feita pelo usuario: xxxxx
-        3- Salvar o dado anterior quando alterado, a fim de monitorar as mudanças.
-*/
-
-/* LINKS
-    1- https://www.quora.com/How-can-I-create-a-login-system-in-C
-*/
 
 typedef struct
 {
