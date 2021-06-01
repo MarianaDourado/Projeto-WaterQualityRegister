@@ -438,7 +438,7 @@ void print_data_and_problems()
     else printf("Potavel\nNao ha problemas para visualizar.\n");
 
     printf("\nPressione qualquer tecla para continuar.\n");
-    getch();
+    //getch();
 }
 
 
@@ -486,7 +486,7 @@ void while_delete_data()
     {
         printf("Informe a UF do estado: ");
         
-        scanf("%s", &state_data.UF);
+        scanf("%[^\n]%*c", state_data.UF);
         
         if(find_file() == -1) printf("Esse estado nao existe!\n");
         else if(verify_data_existence() == 1) delete_data();
