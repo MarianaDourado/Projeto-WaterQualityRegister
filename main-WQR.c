@@ -87,8 +87,14 @@ int main(){
             case 2: // Visualização OKAY
                 printf("Voce escolheu visualizar um registro. Insira o UF: ");
                 scanf("%s", state_data.UF);
-
-                find_file();
+                    
+                while (find_file() == -1)
+                {
+                    printf("Essa sigla de estado nao existe. Insira o UF novamente: ");
+                    scanf("%s%*c", state_data.UF);
+                    
+                    find_file();
+                }
                 if (verify_data_existence() == -1) register_or_not(); // se não há registros
                 else{ // se há registros
                 
@@ -102,7 +108,13 @@ int main(){
                 printf("Voce escolheu alterar dados. Insira o UF: ");
                 scanf("%s", state_data.UF);
 
-                find_file();
+                while (find_file() == -1)
+                {
+                    printf("Essa sigla de estado nao existe. Insira o UF novamente: ");
+                    scanf("%s%*c", state_data.UF);
+                    
+                    find_file();
+                }
                 if (verify_data_existence() == -1)
                     register_or_not();
                 else
@@ -130,6 +142,7 @@ int main(){
         scanf("%d", &finish);
     }
     fclose(file); // Luiza approved this xD kkkkk
+    free(p_UF);
     thanks_return();
     return 0; 
 }
